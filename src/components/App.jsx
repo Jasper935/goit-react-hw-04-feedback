@@ -1,43 +1,52 @@
-import { Component } from 'react';
+import {  useState } from 'react';
+
 import { Section } from './Section/Section';
 import { Statistic } from './Statistic/Statistic';
 import { Feedback } from './Feedback/Feedback';
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
-  onClick = evt => {
-    this.setState(prevState =>{
-      return {[evt.target.name]: prevState[evt.target.name] + 1}}
-    );
+export const App =()=> {
+ const [good, setGood ]= useState(0) 
+ const [neutral, setNeutral] = useState(0) 
+ const [bad, setBad] = useState(0)  
+ 
+  
+ const onClick = evt => {
+switch(evt.target.name){
+  case 'good':  setGood(prev=>prev+1)
+  break;
+  case 'neutral': setNeutral((prev=>prev+1))
+  break;
+  case 'bad': setBad((prev=>prev+1))
+  break;
+  default: return
+}
+
+
+    
   };
 
-  totalFeedbacks=()=>{
-   return Object.values(this.state).reduce((acc, el)=>
-    acc+=el ,0)
+  const totalFeedbacks=()=>{
+   return good+neutral+bad
   }
-  percentage=()=>{
-   return  Math.round((this.state.good*100)/this.totalFeedbacks())
+  const percentage=()=>{
+   return  Math.round((good*100)/totalFeedbacks())
   }
 
-  render() {
+  
     return (
       <>
         <Section title="Please leave a feedback">
-          <Feedback elements={Object.keys(this.state)} onClick={this.onClick} />
+          <Feedback elements={['good', 'neutral', 'bad']} onClick={onClick} />
         </Section>
         <Section title="Statistics">
-          {this.totalFeedbacks()>0?<Statistic
-            good={this.state.good}
-            neutral={this.state.neutral}
-            bad={this.state.bad}
-            total={this.totalFeedbacks()}
-            positivePercentage={this.percentage()}
+          {totalFeedbacks()>0?<Statistic
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={totalFeedbacks()}
+            positivePercentage={percentage()}
           />:<p>There is no feedback</p>}
         </Section>
       </>
     );
-  }
+  
 }
